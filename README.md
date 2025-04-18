@@ -1,6 +1,15 @@
 # 📝 NotepadPlusPlusSessionManagerLauncher  
 **Smart startup tool for Notepad++ with automatic session and workspace control via the ["Session Manager"](https://github.com/mike-foster/npp-session-manager) plugin.**
 
+> 🛈 Although the original Session Manager plugin is no longer actively maintained,
+> However, its true potential – such as launching sessions directly, context-based workspace loading, and seamless integration – is only unlocked through this launcher.
+> The Session Manager Plugin is still listed as an official Notepad++ plugin and available for both x86 and x64:  
+> [Plugin List (x64)](https://github.com/notepad-plus-plus/nppPluginList/blob/master/doc/plugin_list_x64.md)  
+> [Plugin List (x86)](https://github.com/notepad-plus-plus/nppPluginList/blob/master/doc/plugin_list_x86.md)
+
+---
+
+Wenn du möchtest, kann ich es auch als stilisierte Box einrahmen (z. B. als Hinweis oder Warnung). Sag einfach Bescheid!
 ---
 
 ## What is it?
