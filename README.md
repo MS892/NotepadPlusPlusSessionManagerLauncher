@@ -1,106 +1,110 @@
-# 📝 NotepadPlusPlusSessionManagerLauncher
-**Starttool für Notepad++ mit automatischer Session- und Workspace-Steuerung via „Session Manager“-Plugin.**
+# 📝 NotepadPlusPlusSessionManagerLauncher  
+**Smart startup tool for Notepad++ with automatic session and workspace control via the "Session Manager" plugin.**
 
 ---
 
-## Was ist das?
+## What is it?
 
-Dieses Tool ersetzt die normale `notepad++.exe` durch einen intelligenten Launcher, der:
+This tool replaces the default `notepad++.exe` with an intelligent launcher that:
 
-- direkt mit einer **Session-Datei** (`.npp`) oder einer **beliebigen Datei** aufgerufen werden kann,
-- bei Start **ohne Parameter** automatisch die `default.npp`-Session lädt,
-- und bei Session-Dateien das aktuelle Verzeichnis als Workspace in Notepad++ öffnet (`-openFoldersAsWorkspace`).
+- Can be called directly with either a **session file** (`.npp`) or **any regular file**  
+- Automatically loads the `default.npp` session when launched **without parameters**  
+- Opens the **current directory as a workspace** in Notepad++ when a session file is used (`-openFoldersAsWorkspace`)
 
-Dabei wird die bestehende Notepad++-Installation **automatisch erweitert**, nicht beschädigt – das Original wird einfach in `notepad++_original.exe` umbenannt und alle Launcher-Dateien werden übernommen.
+The existing Notepad++ installation is enhanced, not broken – the original EXE is safely renamed to `notepad++_original.exe`, and all launcher files are installed alongside it.
 
-Das Plugin **„Session Manager“** wird dabei vollständig unterstützt und vorausgesetzt. Die `settings.xml` des Plugins wird aktiv angepasst (automatische Umschaltung von `currentSession`, `loadIntoCurrent`, etc.).
+The **Session Manager plugin** is fully supported and required. The plugin’s `settings.xml` is actively updated (automatic switching of `currentSession`, `loadIntoCurrent`, etc.).
 
 ---
 
-## Voraussetzungen
+## Requirements
 
-- Windows
-- Notepad++ installiert
-- Plugin **Session Manager** installiert
-  
+- Windows  
+- Notepad++ installed  
+- Session Manager plugin installed  
+
 ---
 
-## Verwendung
+## Usage
 
-### 1. Nach Installation:
-Du kannst `notepad++.exe` ab sofort genauso verwenden wie vorher – mit:
+### 1. After installation  
+You can now use `notepad++.exe` just like before:
 
 ```sh
-notepad++.exe                          # Öffnet die Default-Session
-notepad++.exe meine-datei.txt         # Öffnet Datei + lädt Default-Session
-notepad++.exe projekt.npp             # Lädt die Session + Workspace aus dem Pfad
+notepad++.exe                        # Opens the default session  
+notepad++.exe my-file.txt           # Opens file + loads default session  
+notepad++.exe my-session.npp        # Loads session and workspace  
 ```
 
-### 2. Start ohne Parameter:
-Öffnet immer die `default.npp`-Session. Falls `default.npp` noch nicht existiert, wird sie automatisch als Fallback verwendet.
+### 2. No parameters?  
+It always opens the `default.npp` session. If it doesn’t exist, it’s automatically created as fallback.
 
-### 3. Beim ersten Start:
-- Wird der Benutzer nach dem Speicherort von Notepad++ gefragt
-- Und nach dem Ort der `settings.xml` des Plugins „Session Manager“
-- Die `notepad++.exe` wird automatisch umbenannt in `notepad++_original.exe`
-- Alle Dateien des Launchers (inkl. EXE) werden automatisch ins Installationsverzeichnis kopiert – keine manuelle Aktion nötig
+### 3. On first launch  
+You’ll be guided to:
 
-Die Konfiguration wird dauerhaft in der **Windows-Registry** gespeichert:
+- Select the **Notepad++ installation folder**  
+- Select the **`settings.xml`** from the Session Manager plugin  
+- The `notepad++.exe` is **automatically renamed** to `notepad++_original.exe`  
+- All launcher files (including the EXE) are copied into the installation folder – **no manual steps required**
+
+Configuration is saved persistently in the Windows Registry:  
 ```
 HKEY_CURRENT_USER\Software\NotepadPlusPlusSessionManagerLauncher
 ```
-Dort werden die Pfade zu Notepad++ und zur `settings.xml` hinterlegt.
+
+This includes the paths to Notepad++ and the `settings.xml`.
 
 ---
 
 ## Installation
 
-1. Lade das Projekt als ZIP oder baue es über Visual Studio.
-2. Starte den Launcher einmal manuell (ohne Parameter), um die Einrichtung durchzuführen:
-   - Auswahl des Notepad++-Installationspfads
-   - Auswahl der `settings.xml`-Datei
-     - Die `settings.xml` findest du unter:  `Notepad++ > Plugins > Session Manager > Settings`
-3. Der Launcher übernimmt alles Weitere automatisch:
-   - `notepad++.exe` wird umbenannt zu `notepad++_original.exe`
-   - Die neue EXE und Hilfsdateien werden ins Verzeichnis kopiert
+1. Download the project as ZIP or build it with Visual Studio.  
+2. Run the launcher manually once (without any parameters) to start the setup:  
+   - Choose the Notepad++ installation path  
+   - Choose the `settings.xml` file  
+     *(Find it in: Notepad++ > Plugins > Session Manager > Settings)*  
+3. The launcher will then:  
+   - Rename `notepad++.exe` to `notepad++_original.exe`  
+   - Copy itself and all required files into the directory  
 
-Danach kannst du Notepad++ ganz normal nutzen – ab sofort mit Session-Intelligenz.
-
----
-
-## Vorteile auf einen Blick
-
-- **Sessions + Projekte** endlich nativ aufrufbar
-- Keine manuelle Session-Umschaltung mehr nötig
-- Nahtlose Integration in Datei-Explorer und Kontextmenüs
-- Völlig rückwärtskompatibel zu originalem Notepad++
+From now on, launching Notepad++ includes full session intelligence – automatically!
 
 ---
 
-## Lizenz
+## Key Advantages
 
-**Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**
-
-Du darfst dieses Projekt frei verwenden, verändern und weitergeben – **aber nicht kommerziell nutzen**.  
-[Details zur Lizenz](https://creativecommons.org/licenses/by-nc/4.0/)
+✅ Native session + project switching  
+✅ No more manual session switching  
+✅ Seamless integration with Explorer and context menus  
+✅ Fully backward compatible with the original Notepad++
 
 ---
 
-## Autor & Kontakt
+## License
+
+**Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**  
+You may freely use, modify, and share this project – **but not for commercial use**.  
+👉 [Read full license terms](https://creativecommons.org/licenses/by-nc/4.0/)
+
+---
+
+## Author & Contact
 
 **Marcel Schmitz**, 2025  
-Made with Love and Coffee – für alle, die Notepad++ ernsthaft produktiv nutzen.
+Made with ❤️ and ☕ – for everyone who uses Notepad++ seriously and productively.  
 
-Bei Fragen oder Ideen: [GitHub-Issues oder direkt an mich]
+For feedback or suggestions: [GitHub Issues or contact me directly]
 
 ---
 
-## Hinweise für Entwickler
+## Notes for Developers
 
-- Der Code ist in C# (.NET) geschrieben
-- Der Einstiegspunkt ist `Program.Main`
-- Die `SessionEditor`- und `NppAutomation`-Hilfsklassen kapseln interne Logik (z. B. Setzen des aktiven Tabs)
-- `.lnk`-Verknüpfungen können zum Testen verwendet werden – Pfade ggf. manuell anpassen
-- Im **Debug-Modus** werden keine Registry-Werte verwendet – stattdessen werden vordefinierte Entwicklungswerte genutzt
+- Written in **C# (.NET)**  
+- Entry point: `Program.Main`  
+- Helper classes: `SessionEditor` and `NppAutomation` encapsulate core logic (e.g., tab switching)  
+- `.lnk` shortcuts can be used for testing – adjust paths as needed  
+- In **Debug mode**, no registry is used – fallback paths are hardcoded  
 
-Pull Requests & Feature Requests sind immer herzlich willkommen! 🎉
+🛠️ Pull requests & feature suggestions always welcome!
+
+--- 
