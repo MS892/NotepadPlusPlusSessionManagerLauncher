@@ -73,26 +73,54 @@ namespace NotepadPlusPlusSessionManagerLauncher
                 var installDir = folderPicker.FileName;
                 var originalExe = Path.Combine(installDir, "notepad++.exe");
                 var renamedExe = Path.Combine(installDir, notepadOriginalFilename);
-                if (!File.Exists(renamedExe))
+                if (File.Exists(renamedExe))
                 {
-                    File.Move(renamedExe, renamedExe + "_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
+                    try
+                    {
+                        File.Move(renamedExe, renamedExe + "_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
+                        MessageBox.Show("Vorhandene Originaldatei wurde gesichert.", "Backup erfolgreich", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Fehler beim Backup der Originaldatei: " + ex.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
 
                 if (!File.Exists(originalExe))
                 {
-                    MessageBox.Show("notepad++.exe wurde im gewählten Verzeichnis nicht gefunden.");
+                    MessageBox.Show("notepad++.exe wurde im gewählten Verzeichnis nicht gefunden.", "Fehlende Datei", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                File.Move(originalExe, renamedExe);
-                notepadExePath = renamedExe;
+                try
+                {
+                    File.Move(originalExe, renamedExe);
+                    notepadExePath = renamedExe;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Fehler beim Umbenennen der Notepad++-Datei: " + ex.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
+
+                MessageBox.Show("Kopiere Launcher-Dateien nach: " + installDir, "Debug", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 string launcherExe = Process.GetCurrentProcess().MainModule?.FileName ?? "";
                 foreach (var file in Directory.GetFiles(Path.GetDirectoryName(launcherExe)!))
                 {
                     string target = Path.Combine(installDir, Path.GetFileName(file));
-                    File.Copy(file, target, true);
+                    try
+                    {
+                        File.Copy(file, target, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Fehler beim Kopieren der Datei: " + file + "\n\n" + ex.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
+
 
                 // 📃 Vermutlicher Speicherort der settings.xml
                 var defaultInitialFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
