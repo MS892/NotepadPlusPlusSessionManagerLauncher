@@ -12,6 +12,12 @@
 
 # VS Code Local History
 *.lh
+*.lh/
+
+# Local Backup Files
+*.bak
+*.bak/
+*.bak.*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

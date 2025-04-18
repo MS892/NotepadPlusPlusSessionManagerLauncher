@@ -7,8 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
-namespace NotepadPlusPlusLauncher
+namespace NotepadPlusPlusSessionManagerLauncher
 {
     class Program
     {
@@ -17,7 +18,8 @@ namespace NotepadPlusPlusLauncher
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            string registryBase = "HKEY_CURRENT_USER\\Software\\NotepadPlusPlusLauncher";
+            string registryBase = "HKEY_CURRENT_USER\\Software\\NotepadPlusPlusSessionManagerLauncher";
+            string notepadOriginalFilename = "notepad++_original.exe";
             string sessionExtension = ".npp";
             string defaultDefaultSession = "default";
             string defaultDefaultSessionName = defaultDefaultSession + sessionExtension;
@@ -32,18 +34,49 @@ namespace NotepadPlusPlusLauncher
             if (string.IsNullOrWhiteSpace(settingsXmlPath) || !File.Exists(settingsXmlPath) ||
                 string.IsNullOrWhiteSpace(notepadExePath) || !File.Exists(notepadExePath))
             {
+                if (!Principal.IsRunningAsAdmin())
+                {
+                    MessageBox.Show("Für die erstmalige Einrichtung sind Administratorrechte erforderlich.\nBitte starte die Anwendung als Administrator.", "Administratorrechte erforderlich", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 MessageBox.Show("Bitte wähle dein Notepad++-Installationsverzeichnis aus.", "Pfad erforderlich", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                using var folderDialog = new FolderBrowserDialog();
-                if (folderDialog.ShowDialog() != DialogResult.OK)
+
+                // 📁 Vermutliches Noetepad++-Installationsverzeichnis
+                var defaultInitialDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Notepad++");
+                if (!Directory.Exists(defaultInitialDir))
+                {
+                    defaultInitialDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Notepad++");
+                    if (!Directory.Exists(defaultInitialDir))
+                    {
+                        defaultInitialDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+                    }
+                }
+
+                var folderPicker = new CommonOpenFileDialog
+                {
+                    Title = "Wähle das Installationsverzeichnis von Notepad++",
+                    DefaultDirectory = defaultInitialDir,
+                    InitialDirectory = defaultInitialDir,
+                    DefaultFileName = "",
+                    EnsurePathExists = true,
+                    IsFolderPicker = true,
+                };
+
+                if (folderPicker.ShowDialog() != CommonFileDialogResult.Ok)
                 {
                     MessageBox.Show("Abgebrochen.");
                     return;
                 }
 
-                var installDir = folderDialog.SelectedPath;
+                var installDir = folderPicker.FileName;
                 var originalExe = Path.Combine(installDir, "notepad++.exe");
-                var renamedExe = Path.Combine(installDir, "notepad++_original.exe");
+                var renamedExe = Path.Combine(installDir, notepadOriginalFilename);
+                if (!File.Exists(renamedExe))
+                {
+                    File.Move(renamedExe, renamedExe + "_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
+                }
 
                 if (!File.Exists(originalExe))
                 {
@@ -61,10 +94,27 @@ namespace NotepadPlusPlusLauncher
                     File.Copy(file, target, true);
                 }
 
-                using var openFileDialog = new OpenFileDialog();
-                openFileDialog.Title = "Wähle die settings.xml von SessionMgr";
-                openFileDialog.Filter = "XML Dateien (*.xml)|*.xml";
-                if (openFileDialog.ShowDialog() != DialogResult.OK)
+                // 📃 Vermutlicher Speicherort der settings.xml
+                var defaultInitialFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "Notepad++", "plugins", "config", "SessionMgr");
+                if (!Directory.Exists(defaultInitialFile))
+                {
+                    defaultInitialFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                }
+
+                var openFileDialog = new CommonOpenFileDialog
+                {
+                    Title = "Wähle die settings.xml von SessionMgr",
+                    InitialDirectory = defaultInitialFile,
+                    DefaultFileName = "settings.xml",
+                    EnsureFileExists = true,
+                    IsFolderPicker = false
+                };
+
+                // Nur XML-Dateien anzeigen
+                openFileDialog.Filters.Add(new CommonFileDialogFilter("XML-Dateien", "*.xml"));
+
+                if (openFileDialog.ShowDialog() != CommonFileDialogResult.Ok)
                 {
                     MessageBox.Show("Abgebrochen.");
                     return;
@@ -77,6 +127,7 @@ namespace NotepadPlusPlusLauncher
                 MessageBox.Show("Setup abgeschlossen. Du kannst jetzt wie gewohnt Notepad++ öffnen – alles läuft nun über den Launcher!", "Fertig", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+
 #endif
 
             if (args.Length < 1)
@@ -112,16 +163,17 @@ namespace NotepadPlusPlusLauncher
             {
                 xml = xml.ReplaceXmlAttributeValue("automaticLoad", "0") ?? throw new InvalidOperationException();
                 xml = xml.ReplaceXmlAttributeValue("loadIntoCurrent", "1") ?? throw new InvalidOperationException();
-                var defaultSession = xml.ReadXmlAttributeValue("defaultSession") ?? defaultDefaultSessionName;
+                var defaultSession = xml.ReadXmlAttributeValue("defaultSession") ?? defaultDefaultSession;
                 xml = xml.ReplaceXmlAttributeValue("previousSession", current) ?? throw new InvalidOperationException();
                 xml = xml.ReplaceXmlAttributeValue("currentSession", defaultSession) ?? throw new InvalidOperationException();
                 startArgs = $"\"{inputPath}\"";
+
+                current = xml.ReadXmlAttributeValue("currentSession") ?? throw new InvalidOperationException();
+                string sessionPath = Path.Combine(sessionDirectory, Path.GetFileNameWithoutExtension(current) + sessionExtension);
+                SessionEditor.SetActiveFileInSession(sessionPath, inputPath);
             }
 
             File.WriteAllText(settingsXmlPath, xml);
-            current = xml.ReadXmlAttributeValue("currentSession") ?? throw new InvalidOperationException();
-            string sessionPath = Path.Combine(sessionDirectory, Path.GetFileNameWithoutExtension(current) + sessionExtension);
-            SessionEditor.SetActiveFileInSession(sessionPath, inputPath);
 
             Process? process = null;
             try
