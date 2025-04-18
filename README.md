@@ -8,12 +8,6 @@
 > [https://github.com/notepad-plus-plus/nppPluginList/blob/master/doc/plugin_list_x86.md](https://github.com/notepad-plus-plus/nppPluginList/blob/master/doc/plugin_list_x86.md)
 
 
-
----
-
-Wenn du möchtest, kann ich es auch als stilisierte Box einrahmen (z. B. als Hinweis oder Warnung). Sag einfach Bescheid!
----
-
 ## What is it?
 
 This tool replaces the default `notepad++.exe` with an intelligent launcher that:
