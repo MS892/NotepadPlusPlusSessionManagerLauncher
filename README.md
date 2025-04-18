@@ -1,5 +1,5 @@
 # 📝 NotepadPlusPlusSessionManagerLauncher  
-**Smart startup tool for Notepad++ with automatic session and workspace control via the "Session Manager" plugin.**
+**Smart startup tool for Notepad++ with automatic session and workspace control via the ["Session Manager"](https://github.com/mike-foster/npp-session-manager) plugin.**
 
 ---
 
